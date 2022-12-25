@@ -194,11 +194,11 @@ exclude =
 :END:
 #+call: make-file-path()
 #+begin_src markdown
-# first-python-package
-This package does amazing things.
+# Orgee
+<<project-description>>
 ## Installation
 ```shell
-$ python -m pip install first-python-package
+$ pip install orgee
 ```
 #+end_src
 * PATH .python-version

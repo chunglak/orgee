@@ -1,6 +1,6 @@
-# first-python-package
-This package does amazing things.
+# Orgee
+A tool to manipulate org-mode documents
 ## Installation
 ```shell
-$ python -m pip install first-python-package
+$ pip install orgee
 ```
