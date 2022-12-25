@@ -81,7 +81,7 @@ def comp(k1: str, k2: str, case_insensitive=True):
     return k1 == k2 or (case_insensitive and k1.lower() == k2.lower())
 
 
-def parse_property(s: str) -> list:
+def parse_property(s: str) -> tuple:
     def process(s):
         if s == "t":
             return True
@@ -90,7 +90,7 @@ def parse_property(s: str) -> list:
         else:
             return s
 
-    s = s.replace('\\"', '"')
+    # s = s.replace('\\"', '"')
     # Escape single quotes
     # shlex thinks single quotes should go in pairs...
     s = s.replace("'", "\\'")
