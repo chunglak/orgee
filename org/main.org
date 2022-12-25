@@ -5,17 +5,7 @@
 #+PROPERTY: file-path (file-name-directory (directory-file-name (file-name-directory (buffer-file-name))))
 #+todo: PATH | DONE
 
-* Log
-** [2022-12-25 Sun 18:11] v0.0.4 (pypi)
-Really added the py.typed this time
-** [2022-12-25 Sun 18:01] v0.0.3 (pypi)
-Trying the py.typed again
-** [2022-12-25 Sun 17:55] Sent to pypi
-** [2022-12-25 Sun 17:52] v0.0.2
-Added py.typed file
-** [2022-12-25 Sun] Uploaded to github and pypi
-** [2022-12-25 Sun] v0.0.1
-** [2022-12-25 Sun] Project creation
+* [[id:a616156f-4200-4843-b577-3078c48f0a27][Zettel]]
 * [[https://pypi.org/project/orgee/][orgee · PyPI]]
 * [[https://github.com/chunglak/orgee][GitHub - chunglak/orgee]]
 * Configuration
