@@ -27,7 +27,7 @@ A great package
 ** URL
 #+name: project-url
 #+begin_src conf
-https://github.com/chunglak/orgee
+https://github.com/chunglak/<<project-name>>
 #+end_src
 ** Author
 *** Name
