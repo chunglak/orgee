@@ -1,0 +1,6 @@
+# env files
+.env*
+# include direnv files
+!.envrc
+# dist folder
+/dist
