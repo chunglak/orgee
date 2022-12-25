@@ -4,3 +4,5 @@
 !.envrc
 # dist folder
 /dist
+# mypy
+.mypy_cache

@@ -124,6 +124,7 @@ PATH_add bin
 /dist
 # mypy
 .mypy_cache
+__pycache__
 #+end_src
 * PATH pyproject.toml
 :PROPERTIES:
@@ -270,6 +271,7 @@ PACKAGES=(
 	mypy # typing linter
 	pylint # linter
   twine # to publish to pypi
+  pytest # testing framework
   # Package dependencies
 )
 pip install --upgrade pip
