@@ -6,4 +6,7 @@
 /dist
 # mypy
 .mypy_cache
+# python
 __pycache__
+# egg
+/src/orgee.egg-info
