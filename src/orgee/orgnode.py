@@ -1,11 +1,16 @@
 from __future__ import annotations  # PEP 585
 
 import hashlib
-import re
 from dataclasses import dataclass, field
 from typing import Any, Iterator  # pylint:disable=unused-import
 
-from .util import prop_by_key, first_prop_by_key, replace_prop, clean_text
+from .util import (
+    prop_by_key,
+    first_prop_by_key,
+    replace_prop,
+    clean_text,
+    extract_url,
+)
 
 NOT_FOUND = -1
 
@@ -72,6 +77,8 @@ class OrgNode:
     ):
         self.root_meta: RootMeta | None = RootMeta() if is_root else None
         self.parent: OrgNode | None = parent
+        # A node cannot both be a root node and have a parent
+        assert not (self.root_meta and self.parent)
         # This lineno only works at import time
         # When the nodes are changed it's not valid anymore
         self.lineno: int = 1
@@ -86,6 +93,9 @@ class OrgNode:
         self.find_child_by_title_index: int = NOT_FOUND
 
     def all_tags(self) -> set[str]:
+        """
+        Return both the node's own tags and all the tags inherited from parent(s)
+        """
         if self.parent:
             return self.tags | self.parent.all_tags()
         else:
@@ -301,8 +311,3 @@ class OrgNode:
 
     def clean_title(self) -> str:
         return clean_text(self.title)
-
-
-def extract_url(s: str) -> str:
-    m = re.match(r"\[\[(.+)\]\[.+\]\]", s.strip())
-    return m.groups()[0] if m else ""

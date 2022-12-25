@@ -22,7 +22,7 @@ orgee
 ** Description
 #+name: project-description
 #+begin_src conf
-A great package
+A tool to manipulate org-mode documents
 #+end_src
 ** URL
 #+name: project-url
@@ -122,6 +122,8 @@ PATH_add bin
 !.envrc
 # dist folder
 /dist
+# mypy
+.mypy_cache
 #+end_src
 * PATH pyproject.toml
 :PROPERTIES:
@@ -133,6 +135,9 @@ PATH_add bin
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 80
 #+end_src
 * PATH setup.cfg
 :PROPERTIES:

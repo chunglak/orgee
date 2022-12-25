@@ -27,6 +27,11 @@ def is_org_file(fn: str) -> bool:
     )
 
 
+def extract_url(s: str) -> str:
+    m = re.match(r"\[\[(.+)\]\[.+\]\]", s.strip())
+    return m.groups()[0] if m else ""
+
+
 def escape_url(url: str) -> str:
     return url.replace("\\", "\\\\").replace("[", r"\[").replace("]", r"\]")
 
@@ -116,6 +121,10 @@ def dump_property(v) -> str:
 
 
 def clean_text(s: str) -> str:
+    """
+    Return raw text
+    """
+    # TODO: remove emphasis marks
     s = s.strip()
     # Recursively remove the links urls from heading
     m = re.match(r"(.*)\[\[.+?\]\[(.+?)\]\](.*)", s)
