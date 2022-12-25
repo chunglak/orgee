@@ -6,6 +6,9 @@
 #+todo: PATH | DONE
 
 * Log
+** [2022-12-25 Sun 17:55] Sent to pypi
+** [2022-12-25 Sun 17:52] v0.0.2
+Added py.typed file
 ** [2022-12-25 Sun] Uploaded to github and pypi
 ** [2022-12-25 Sun] v0.0.1
 ** [2022-12-25 Sun] Project creation
@@ -23,7 +26,7 @@ orgee
 ** Project version
 #+name: project-version
 #+begin_src conf
-0.0.1
+0.0.2
 #+end_src
 ** Description
 #+name: project-description
@@ -250,6 +253,20 @@ pip install "${PACKAGES[@]}"
 # Install jupyter kernel
 pip install ipykernel
 ipython kernel install --user --name=$venv
+#+end_src
+*** PATH upload-to-pypi
+:PROPERTIES:
+:file-path: "/home/chunglak/projects/orgee/bin/upload-to-pypi"
+:file-path-link: [[file:/home/chunglak/projects/orgee/bin/upload-to-pypi][upload-to-pypi]]
+:END:
+#+call: make-file-path()
+#+begin_src bash :shebang #!/bin/bash
+set -eu
+
+cd $PROJECT_ROOT
+rm -rf dist
+pyproject-build
+twine upload dist/*
 #+end_src
 ** PATH src
 :PROPERTIES:
