@@ -9,4 +9,4 @@
 # python
 __pycache__
 # egg
-/src/orgee.egg-info
+/src/*.egg-info

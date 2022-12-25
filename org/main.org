@@ -37,6 +37,14 @@ orgee
 #+begin_src conf
 A tool to manipulate org-mode documents
 #+end_src
+** Long description
+#+name: project-long-description
+#+begin_src markdown
+## Installation
+```shell
+$ pip install <<project-name>>
+```
+#+end_src
 ** URL
 #+name: project-url
 #+begin_src conf
@@ -68,7 +76,12 @@ GPL-3.0-or-later
 #+begin_src conf
 3.10
 #+end_src
-* Tangled files
+** Dependencies
+#+name: project-dependencies
+#+begin_src conf
+#+end_src
+* Default tangled files
+Don't add anything here, it's common to all projects
 ** PATH .envrc
 :PROPERTIES:
 :file-path: "/home/chunglak/projects/orgee/.envrc"
@@ -100,7 +113,7 @@ PATH_add bin
 # python
 __pycache__
 # egg
-/src/<<project-name>>.egg-info
+/src/*.egg-info
 #+end_src
 ** PATH pyproject.toml
 :PROPERTIES:
@@ -142,6 +155,8 @@ packages = find:
 zip_safe = True
 include_package_data = True
 
+install_requires =
+    <<project-dependencies>>
 # install_requires =
 #     pandas == 1.4.1
 #     PyYAML >= 6.0
@@ -176,12 +191,10 @@ exclude =
 :END:
 #+call: make-file-path()
 #+begin_src markdown
-# Orgee
+# <<project-name>>
 <<project-description>>
-## Installation
-```shell
-$ pip install orgee
-```
+
+<<project-long-description>>
 #+end_src
 ** PATH .python-version
 :PROPERTIES:
@@ -255,6 +268,7 @@ PACKAGES=(
   twine # to publish to pypi
   pytest # testing framework
   # Package dependencies
+  <<project-dependencies>>
 )
 pip install --upgrade pip
 pip install wheel
@@ -302,15 +316,15 @@ Put test suite here
 :END:
 #+call: make-file-path()
 No need to create this dir: it should pre-exist
-*** PATH testo.org
+*** PATH template.org
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/orgee/org/testo.org"
-:file-path-link: [[file:/home/chunglak/projects/orgee/org/testo.org][testo.org]]
+:file-path: "/home/chunglak/projects/orgee/org/template.org"
+:file-path-link: [[file:/home/chunglak/projects/orgee/org/template.org][template.org]]
 :END:
 #+call: make-file-path()
 Make copies of this file
 #+begin_src org
-,#+title: Testo
+,#+title: Template
 ,#+property: header-args:jupyter-python :kernel <<project-name>> :session testo
 
 ,* Init
@@ -354,6 +368,14 @@ def func():
 runf(func)  # pylint: disable=undefined-variable
 ,#+end_src
 #+end_src
+* Project-specific tangled files
+** PATH bin
+:PROPERTIES:
+:header-args:bash: :shebang #!/bin/bash
+:file-path: "/home/chunglak/projects/orgee/bin"
+:file-path-link: [[file:/home/chunglak/projects/orgee/bin][bin]]
+:END:
+#+call: make-file-path()
 * Elisp code
 ** PATH make-file-path
 :PROPERTIES:

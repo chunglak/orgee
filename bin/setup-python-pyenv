@@ -33,6 +33,7 @@ PACKAGES=(
   twine # to publish to pypi
   pytest # testing framework
   # Package dependencies
+  
 )
 pip install --upgrade pip
 pip install wheel
