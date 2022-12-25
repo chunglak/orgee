@@ -6,6 +6,8 @@
 #+todo: PATH | DONE
 
 * Log
+** [2022-12-25 Sun 18:11] v0.0.4 (pypi)
+Really added the py.typed this time
 ** [2022-12-25 Sun 18:01] v0.0.3 (pypi)
 Trying the py.typed again
 ** [2022-12-25 Sun 17:55] Sent to pypi
@@ -28,7 +30,7 @@ orgee
 ** Project version
 #+name: project-version
 #+begin_src conf
-0.0.3
+0.0.4
 #+end_src
 ** Description
 #+name: project-description
@@ -162,6 +164,10 @@ include_package_data = True
 where = src
 exclude =
     test*
+
+[options.package_data]
+,* =
+  ,*.typed
 #+end_src
 ** PATH README.md
 :PROPERTIES:
