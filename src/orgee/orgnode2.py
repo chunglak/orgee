@@ -88,6 +88,9 @@ class OrgNode:
 
         return parse_org_file(fn)
 
+    def __str__(self):
+        return self.title
+
     def all_tags(self) -> set[str]:
         """
         Return both the node's own tags and all the tags inherited from parent(s)
