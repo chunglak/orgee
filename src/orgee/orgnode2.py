@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import Any, Iterator  # pylint:disable=unused-import
 
 from .properties import OrgProperties
+from .tag import OrgTags
 from .markup import remove_org_markup
 from .link import extract_url
 
@@ -77,7 +78,7 @@ class OrgNode:
         self.level: int | None = None
         self.title: str = title if title else ""
         self.body: list[str] = body if body else []
-        self.tags: set[str] = tags if tags else set()
+        self.tags: OrgTags = OrgTags()
         self.counter_cookie: tuple[int, int] | None = counter_cookie
         self.find_child_by_title_index: int = NOT_FOUND
 
