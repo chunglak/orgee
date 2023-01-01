@@ -3,7 +3,8 @@ from __future__ import annotations  # PEP 585
 import logging
 import re
 
-from orgee import OrgNode, RootMeta, OrgProperty
+from .orgnode2 import OrgNode, RootMeta
+from .properties import OrgProperty
 
 
 def parse_org_file(fn: str) -> OrgNode:
