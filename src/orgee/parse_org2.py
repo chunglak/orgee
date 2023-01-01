@@ -3,7 +3,7 @@ from __future__ import annotations  # PEP 585
 import logging
 import re
 
-from .orgnode2 import OrgNode, RootMeta
+from .orgnode2 import OrgNode, RootMeta, TodoType
 from .properties import OrgProperty
 
 
@@ -143,7 +143,10 @@ def parse_heading(heading: str, root_meta: RootMeta | None = None) -> dict:
     if not root_meta:
         root_meta = RootMeta()
     todosplit = rest.split(" ", maxsplit=1)
-    if len(todosplit) > 1 and root_meta.todo_type(todosplit[0]):
+    if (
+        len(todosplit) > 1
+        and root_meta.todo_type(todosplit[0]) is not TodoType.INVALID
+    ):
         dic["todo"] = todosplit[0]
         rest = todosplit[1]
 

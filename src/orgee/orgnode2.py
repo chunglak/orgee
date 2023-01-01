@@ -16,6 +16,7 @@ DEFAULT_TODOS = (["TODO"], ["DONE"])
 class TodoType(Enum):
     DONE = 0
     TODO = 1
+    INVALID = 2
 
 
 @dataclass
@@ -44,7 +45,7 @@ class RootMeta:
         elif kw in dones:
             return TodoType.DONE
         else:
-            raise Exception(f"Todo keyword {kw} is invalid")
+            return TodoType.INVALID
 
 
 class OrgNode:
