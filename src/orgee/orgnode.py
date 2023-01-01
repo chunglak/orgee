@@ -1,62 +1,51 @@
 from __future__ import annotations  # PEP 585
 
 import hashlib
+from enum import Enum
 from dataclasses import dataclass, field
 from typing import Any, Iterator  # pylint:disable=unused-import
 
-from .util import (
-    prop_by_key,
-    first_prop_by_key,
-    replace_prop,
-    clean_text,
-    extract_url,
-)
+from .properties import OrgProperties
+from .markup import remove_org_markup
+from .link import extract_url
 
 NOT_FOUND = -1
+DEFAULT_TODOS = (["TODO"], ["DONE"])
+
+
+class TodoType(Enum):
+    DONE = 0
+    TODO = 1
+    INVALID = 2
 
 
 @dataclass
 class RootMeta:
     # List of custom todos for the file
-    ptodos: tuple[list[str], list[str]] | None = None
+    # First list are the TODO keywords, second the DONE keywords
+    _todos: tuple[list[str], list[str]] | None = None
     # These are the files-wide properties (#+PROPERTY:)
     # Not the ones inside the properties drawer
-    properties: list[str] = field(default_factory=list)
+    file_properties: list[str] = field(default_factory=list)
     # Other #+-type of file-wide settings
     other_meta: list[tuple[str, str]] = field(default_factory=list)
 
     @property
     def todos(self) -> tuple[list[str], list[str]]:
-        return self.ptodos if self.ptodos else (["TODO"], ["DONE"])
+        return self._todos if self._todos else DEFAULT_TODOS
 
-    def todo_type(self, kw: str) -> int:
+    @todos.setter
+    def todos(self, todos: tuple[list[str], list[str]]):
+        self._todos = todos
+
+    def todo_type(self, kw: str) -> TodoType:
         todos, dones = self.todos
         if kw in todos:
-            return 1
+            return TodoType.TODO
         elif kw in dones:
-            return -1
+            return TodoType.DONE
         else:
-            return 0
-
-    def other_meta_by_key(
-        self, key: str, parse=True, case_insensitive=True
-    ) -> list:
-        return prop_by_key(
-            key=key,
-            props=self.other_meta,
-            parse=parse,
-            case_insensitive=case_insensitive,
-        )
-
-    def first_other_meta_by_key(
-        self, key: str, parse=True, case_insensitive=True
-    ) -> str | None:
-        return first_prop_by_key(
-            key=key,
-            props=self.other_meta,
-            parse=parse,
-            case_insensitive=case_insensitive,
-        )
+            return TodoType.INVALID
 
 
 class OrgNode:
@@ -82,7 +71,7 @@ class OrgNode:
         # This lineno only works at import time
         # When the nodes are changed it's not valid anymore
         self.lineno: int = 1
-        self.properties: list[tuple[str, str]] = []
+        self.properties: OrgProperties = OrgProperties()
         self.children: list[OrgNode] = []
         self.todo: str | None = todo
         self.level: int | None = None
@@ -91,6 +80,16 @@ class OrgNode:
         self.tags: set[str] = tags if tags else set()
         self.counter_cookie: tuple[int, int] | None = counter_cookie
         self.find_child_by_title_index: int = NOT_FOUND
+
+    @staticmethod
+    def from_file(fn: str) -> OrgNode:
+        # pylint: disable=import-outside-toplevel
+        from .parse_org import parse_org_file
+
+        return parse_org_file(fn)
+
+    def __str__(self):
+        return self.title
 
     def all_tags(self) -> set[str]:
         """
@@ -103,28 +102,6 @@ class OrgNode:
 
     def node_hash(self) -> str:
         return hashlib.sha256(self.dumps().encode("utf8")).hexdigest()
-
-    def prop_by_key(self, key: str, parse=True, case_insensitive=True) -> list:
-        return prop_by_key(
-            key=key,
-            props=self.properties,
-            parse=parse,
-            case_insensitive=case_insensitive,
-        )
-
-    def first_prop_by_key(
-        self, key: str, parse=True, case_insensitive=True
-    ) -> str | None:
-        ps = self.prop_by_key(
-            key=key, parse=parse, case_insensitive=case_insensitive
-        )
-        return ps[0] if ps else None
-
-    def replace_prop(self, key, value=None) -> list:
-        ps, self.properties = replace_prop(
-            key=key, props=self.properties, value=value
-        )
-        return ps
 
     def recurse_nodes(self) -> list[OrgNode]:
         """
@@ -158,21 +135,17 @@ class OrgNode:
     def dumps(self) -> str:
         ls: list[str] = []
         if rm := self.root_meta:
-            if self.properties:
-                ls.append(":PROPERTIES:")
-                for k, v in self.properties:
-                    ls.append(f":{k}: {v}")
-                ls.append(":END:")
+            if self.properties.has_properties():
+                ls.append(self.properties.dumps(create_drawer=True))
             if self.title:
                 ls.append(f"#+TITLE: {self.title}")
             if tags := sorted(self.tags):
                 ls.append(f"#+FILETAGS: {' '.join(tags)}")
-            if ptodos := rm.ptodos:
+            if (todos := rm.todos) != DEFAULT_TODOS:
                 ls.append(
-                    "#+TODO: %s | %s"
-                    % (" ".join(ptodos[0]), " ".join(ptodos[1]))
+                    "#+TODO: %s | %s" % (" ".join(todos[0]), " ".join(todos[1]))
                 )
-            if ps := rm.properties:
+            if ps := rm.file_properties:
                 for p in ps:
                     ls.append(f"#+PROPERTY: {p}")
             if ms := rm.other_meta:
@@ -180,11 +153,8 @@ class OrgNode:
                     ls.append(f"#+{k.upper()}: {v}")
         else:
             ls.append(self.dump_heading())
-            if self.properties:
-                ls.append(":PROPERTIES:")
-                for k, v in self.properties:
-                    ls.append(f":{k}: {v}")
-                ls.append(":END:")
+            if self.properties.has_properties():
+                ls.append(self.properties.dumps(create_drawer=True))
         if body := self.body:
             ls.append("\n".join(body))
         for c in self.children:
@@ -270,7 +240,7 @@ class OrgNode:
     ) -> OrgNode | None:
         def matching(s: str) -> bool:
             if title:
-                cs = clean_text(s)
+                cs = remove_org_markup(s)
                 if startswith:
                     # print(f"cs={cs}\ntitle={title}")
                     if not cs.startswith(title):
@@ -282,7 +252,7 @@ class OrgNode:
             return True
 
         if title:
-            title = clean_text(title)
+            title = remove_org_markup(title)
         for i, child in enumerate(self.children):
             # if clean_text(child.title) == title:
             if matching(child.title):
@@ -310,4 +280,4 @@ class OrgNode:
                 return None
 
     def clean_title(self) -> str:
-        return clean_text(self.title)
+        return remove_org_markup(self.title)

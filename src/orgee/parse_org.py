@@ -3,7 +3,8 @@ from __future__ import annotations  # PEP 585
 import logging
 import re
 
-from .orgnode import OrgNode, RootMeta
+from .orgnode import OrgNode, RootMeta, TodoType
+from .properties import OrgProperty
 
 
 def parse_org_file(fn: str) -> OrgNode:
@@ -83,8 +84,7 @@ def parse_body(
                     print(line)
                     raise Exception("Bad property")
                 k, v = m.groups()
-                node.properties.append((k, v))
-                # node.properties.append((k, process_property(v)))
+                node.properties.add_property(OrgProperty.from_raw((k, v)))
         elif is_root and lsl.startswith("#+"):
             assert node.root_meta
             rm = node.root_meta
@@ -104,7 +104,7 @@ def parse_body(
                 # rm.filetags.update([t for t in v.split(" ") if t])
                 node.tags.update([t for t in v.split(" ") if t])
             elif kl == "property":
-                rm.properties.append(v)
+                rm.file_properties.append(v)
             elif kl == "todo":
                 if "|" in v:
                     stodos, sdones = v.split("|", maxsplit=1)
@@ -114,7 +114,7 @@ def parse_body(
                     ts = [t.strip() for t in v.split(" ")]
                     todos = ts[:-1]
                     dones = [ts[-1]]
-                rm.ptodos = ([t for t in todos if t], [t for t in dones if t])
+                rm.todos = ([t for t in todos if t], [t for t in dones if t])
             else:
                 node.root_meta.other_meta.append((k, v))
         else:
@@ -143,7 +143,10 @@ def parse_heading(heading: str, root_meta: RootMeta | None = None) -> dict:
     if not root_meta:
         root_meta = RootMeta()
     todosplit = rest.split(" ", maxsplit=1)
-    if len(todosplit) > 1 and root_meta.todo_type(todosplit[0]):
+    if (
+        len(todosplit) > 1
+        and root_meta.todo_type(todosplit[0]) is not TodoType.INVALID
+    ):
         dic["todo"] = todosplit[0]
         rest = todosplit[1]
 
