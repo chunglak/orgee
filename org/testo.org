@@ -32,6 +32,67 @@ def runf(func):
 print("Init done")
 #+end_src
 
+#+RESULTS:
+: Init done
+
+* Dump property
+#+begin_src jupyter-python :async yes
+def func():
+    # pylint: disable=import-outside-toplevel
+    from orgee.util import dump_property
+
+    v = ["1983.The Shootist",'foo']
+    print(dump_property(v))
+
+
+runf(func)  # pylint: disable=undefined-variable
+#+end_src
+
+#+RESULTS:
+: "1983.The Shootist" foo
+: Task finished in 0.00s
+
+* OrgNode2
+#+begin_src jupyter-python :async yes
+def func():
+    # pylint: disable=import-outside-toplevel
+    from orgee import OrgNode, parse_org_file
+
+    fn = "/home/chunglak/monobox/zettel/20220819134353-enum.org"
+
+    node = OrgNode.from_file(fn)
+
+
+runf(func)  # pylint: disable=undefined-variable
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+# [goto error]
+: [1;31m---------------------------------------------------------------------------[0m
+: [1;31mImportError[0m                               Traceback (most recent call last)
+: Cell [1;32mIn[4], line 10[0m
+: [0;32m      5[0m     fn [38;5;241m=[39m [38;5;124m"[39m[38;5;124m/home/chunglak/monobox/zettel/20220819134353-enum.org[39m[38;5;124m"[39m
+: [0;32m      7[0m     node [38;5;241m=[39m OrgNode[38;5;241m.[39mfrom_file(fn)
+: [1;32m---> 10[0m [43mrunf[49m[43m([49m[43mfunc[49m[43m)[49m  [38;5;66;03m# pylint: disable=undefined-variable[39;00m
+: 
+: Cell [1;32mIn[1], line 22[0m, in [0;36mrunf[1;34m(func)[0m
+: [0;32m     20[0m [38;5;28;01mdef[39;00m [38;5;21mrunf[39m(func):
+: [0;32m     21[0m     t0 [38;5;241m=[39m time[38;5;241m.[39mtime()
+: [1;32m---> 22[0m     r [38;5;241m=[39m [43mfunc[49m[43m([49m[43m)[49m
+: [0;32m     23[0m     [38;5;28mprint[39m([38;5;124mf[39m[38;5;124m"[39m[38;5;124mTask finished in [39m[38;5;132;01m{[39;00mtime[38;5;241m.[39mtime()[38;5;241m-[39mt0[38;5;132;01m:[39;00m[38;5;124m.2f[39m[38;5;132;01m}[39;00m[38;5;124ms[39m[38;5;124m"[39m)
+: [0;32m     24[0m     [38;5;28;01mreturn[39;00m r
+: 
+: Cell [1;32mIn[4], line 3[0m, in [0;36mfunc[1;34m()[0m
+: [0;32m      1[0m [38;5;28;01mdef[39;00m [38;5;21mfunc[39m():
+: [0;32m      2[0m     [38;5;66;03m# pylint: disable=import-outside-toplevel[39;00m
+: [1;32m----> 3[0m     [38;5;28;01mfrom[39;00m [38;5;21;01morgee[39;00m [38;5;28;01mimport[39;00m OrgNode, parse_org_file
+: [0;32m      5[0m     fn [38;5;241m=[39m [38;5;124m"[39m[38;5;124m/home/chunglak/monobox/zettel/20220819134353-enum.org[39m[38;5;124m"[39m
+: [0;32m      7[0m     node [38;5;241m=[39m OrgNode[38;5;241m.[39mfrom_file(fn)
+: 
+: [1;31mImportError[0m: cannot import name 'parse_org_file' from 'orgee' (/home/chunglak/.pyenv/versions/3.10.8/envs/orgee-roam/lib/python3.10/site-packages/orgee/__init__.py)
+:END:
+
 * Func
 #+begin_src jupyter-python :async yes
 def func():
