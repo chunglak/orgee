@@ -58,6 +58,16 @@ class OrgProperties:
         ps = self.property_by_key(key=key)
         return ps[0] if ps else None
 
+    def replace_property(self, key: str, new_value=None) -> list:
+        old_values = self.property_by_key(key)
+        lkey = key.lower()
+        self.properties = [
+            prop for prop in self.properties if prop.key.lower() != lkey
+        ]
+        if new_value is not None:
+            self.properties.append(OrgProperty(key=key, values=new_value))
+        return old_values
+
 
 @dataclass
 class OrgProperty:
