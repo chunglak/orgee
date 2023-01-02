@@ -58,7 +58,9 @@ class OrgProperties:
         ps = self.property_by_key(key=key)
         return ps[0] if ps else None
 
-    def replace_property(self, key: str, new_value: list | None = None) -> list:
+    def replace_property(self, key: str, new_value=None) -> list:
+        if type(new_value) not in [list, tuple]:
+            new_value = [new_value]
         old_values = self.property_by_key(key)
         lkey = key.lower()
         self.properties = [
