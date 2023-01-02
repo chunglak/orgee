@@ -1,6 +1,7 @@
 from __future__ import annotations  # PEP 585
 
 import shlex
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 
 
@@ -58,8 +59,14 @@ class OrgProperties:
         ps = self.property_by_key(key=key)
         return ps[0] if ps else None
 
-    def replace_property(self, key: str, new_value=None) -> list:
-        if type(new_value) not in [list, tuple]:
+    def replace_property(
+        self,
+        key: str,
+        new_value: Iterable | bool | float | int | str | None = None,
+    ) -> list:
+        if isinstance(new_value, Iterable) and not isinstance(new_value, str):
+            new_value = list(new_value)
+        else:
             new_value = [new_value]
         old_values = self.property_by_key(key)
         lkey = key.lower()
