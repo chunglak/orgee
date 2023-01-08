@@ -15,6 +15,17 @@ class OrgProperties:
             properties=[OrgProperty.from_raw(tu) for tu in tus]
         )
 
+    @staticmethod
+    def from_rec(rec: list[tuple[str, list]]) -> OrgProperties:
+        return OrgProperties(
+            properties=[
+                OrgProperty(key=key, values=values) for key, values in rec
+            ]
+        )
+
+    def to_rec(self) -> list[tuple[str, list]]:
+        return [(prop.key, prop.values) for prop in self.properties]
+
     def has_properties(self) -> bool:
         return len(self.properties) > 0
 
