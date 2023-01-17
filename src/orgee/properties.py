@@ -96,8 +96,8 @@ class OrgProperty:
 
     @staticmethod
     def from_raw(tu: tuple[str, str]) -> OrgProperty:
-        key, strval = tu
-        return OrgProperty(key=key, values=parse_property(strval))
+        key, val = tu
+        return OrgProperty(key=key, values=parse_property(key=key, val=val))
 
     def dump(self) -> tuple[str, str]:
         return (self.key, dump_property(self.values))
@@ -107,7 +107,7 @@ class OrgProperty:
         return f":{k}: {v}"
 
 
-def parse_property(s: str) -> list[bool | float | int | str]:
+def parse_property(key: str, val: str) -> list[bool | float | int | str]:
     def process(s):
         if s == "t":
             return True
@@ -122,11 +122,14 @@ def parse_property(s: str) -> list[bool | float | int | str]:
                 except ValueError:
                     return s
 
+    # Do not parse header-args
+    if key.lower().startswith("header-args"):
+        return [val]
     # s = s.replace('\\"', '"')
     # Escape single quotes
     # shlex thinks single quotes should go in pairs...
-    s = s.replace("'", "\\'")
-    fs = shlex.split(s)
+    val = val.replace("'", "\\'")
+    fs = shlex.split(val)
     # Unescape single quotes
     fs = [f.replace("\\'", "'") for f in fs]
     return list(map(process, fs))
