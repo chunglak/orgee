@@ -43,12 +43,12 @@ class OrgProperties:
             ]
         )
 
-    def dump(self, consolidate_keys: bool = True) -> list[tuple[str, str]]:
+    def dump(self, consolidate_keys: bool = False) -> list[tuple[str, str]]:
         ops = self.consolidate_keys() if consolidate_keys else self
         return [op.dump() for op in ops.properties]
 
     def dumps(
-        self, consolidate_keys: bool = True, create_drawer: bool = True
+        self, consolidate_keys: bool = False, create_drawer: bool = True
     ) -> str:
         ops = self.consolidate_keys() if consolidate_keys else self
         s = "\n".join(op.dumps() for op in ops.properties)
@@ -100,7 +100,7 @@ class OrgProperty:
         return OrgProperty(key=key, values=parse_property(key=key, val=val))
 
     def dump(self) -> tuple[str, str]:
-        return (self.key, dump_property(self.values))
+        return (self.key, dump_property(key=self.key, vals=self.values))
 
     def dumps(self) -> str:
         k, v = self.dump()
@@ -135,7 +135,7 @@ def parse_property(key: str, val: str) -> list[bool | float | int | str]:
     return list(map(process, fs))
 
 
-def dump_property(v: list[bool | float | int | str]) -> str:
+def dump_property(key: str, vals: list[bool | float | int | str]) -> str:
     def quote(s) -> str:
         if s is True:
             return "t"
@@ -151,7 +151,11 @@ def dump_property(v: list[bool | float | int | str]) -> str:
         else:
             return str(s)
 
-    if isinstance(v, (list, tuple)):
-        return " ".join(map(quote, v))
-    else:
-        return quote(v)
+    # Do not quote header-args
+    if key.lower().startswith("header-args"):
+        return str(vals[0])
+    return " ".join(map(quote, vals))
+    # if isinstance(vals, (list, tuple)):
+    #     return " ".join(map(quote, vals))
+    # else:
+    #     return quote(vals)
