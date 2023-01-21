@@ -75,16 +75,18 @@ class OrgProperties:
         key: str,
         new_value: Iterable | bool | float | int | str | None = None,
     ) -> list:
-        if isinstance(new_value, Iterable) and not isinstance(new_value, str):
-            new_value = list(new_value)
-        else:
-            new_value = [new_value]
         old_values = self.property_by_key(key)
         lkey = key.lower()
         self.properties = [
             prop for prop in self.properties if prop.key.lower() != lkey
         ]
         if new_value is not None:
+            if isinstance(new_value, Iterable) and not isinstance(
+                new_value, str
+            ):
+                new_value = list(new_value)
+            else:
+                new_value = [new_value]
             self.properties.append(OrgProperty(key=key, values=new_value))
         return old_values
 
