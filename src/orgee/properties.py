@@ -141,8 +141,9 @@ def dump_property(key: str, vals: list[bool | float | int | str]) -> str:
             return "t"
         elif s is False:
             return "nil"
-        elif not s:
-            return ""
+        elif s is None:
+            # return ""
+            return "nil"
         elif isinstance(s, str):
             # Escape double quotes
             s = s.replace('"', '\\"')
