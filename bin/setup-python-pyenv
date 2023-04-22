@@ -1,11 +1,13 @@
 #!/bin/bash
-set -eu
+set -e
 
 # Reset venv
 venv="orgee"
-python_version="3.10.8"
+python_version="3.10.10"
 if [[ $(pyenv versions | grep "$venv") ]]; then
+  set +e
 	pyenv virtualenv-delete -f $venv
+  set -e
 fi
 pyenv virtualenv $python_version $venv
 eval "$(pyenv init -)"
@@ -26,13 +28,11 @@ done
 
 # Install dependencies
 PACKAGES=(
-  # Dev dependencies
-	black # Formatter
-	mypy # typing linter
-	pylint # linter
+  black # Formatter
+  mypy # typing linter
+  pylint # linter
   twine # to publish to pypi
   pytest # testing framework
-  # Package dependencies
   
 )
 pip install --upgrade pip

@@ -20,7 +20,7 @@ orgee
 ** Project version
 #+name: project-version
 #+begin_src conf
-0.0.4
+0.0.5
 #+end_src
 ** Description
 #+name: project-description
@@ -59,7 +59,7 @@ GPL-3.0-or-later
 ** Python version
 #+name: python-version
 #+begin_src conf
-3.10.8
+3.10.10
 #+end_src
 ** Minimal python version
 #+name: minimal-python-version
@@ -70,12 +70,21 @@ GPL-3.0-or-later
 #+name: project-dependencies
 #+begin_src conf
 #+end_src
+** Dev dependencies
+#+name: project-dependencies-dev
+#+begin_src conf
+black # Formatter
+mypy # typing linter
+pylint # linter
+twine # to publish to pypi
+pytest # testing framework
+#+end_src
 * Default tangled files
 Don't add anything here, it's common to all projects
 ** PATH .envrc
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/python_package_template/.envrc"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/.envrc][.envrc]]
+:file-path: "/home/chunglak/projects/orgee/.envrc"
+:file-path-link: [[file:/home/chunglak/projects/orgee/.envrc][.envrc]]
 :END:
 #+call: make-file-path()
 direnv integration
@@ -87,8 +96,8 @@ PATH_add bin
 #+end_src
 ** PATH .gitignore
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/python_package_template/.gitignore"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/.gitignore][.gitignore]]
+:file-path: "/home/chunglak/projects/orgee/.gitignore"
+:file-path-link: [[file:/home/chunglak/projects/orgee/.gitignore][.gitignore]]
 :END:
 #+call: make-file-path()
 #+begin_src conf
@@ -107,8 +116,8 @@ __pycache__
 #+end_src
 ** PATH pyproject.toml
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/python_package_template/pyproject.toml"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/pyproject.toml][pyproject.toml]]
+:file-path: "/home/chunglak/projects/orgee/pyproject.toml"
+:file-path-link: [[file:/home/chunglak/projects/orgee/pyproject.toml][pyproject.toml]]
 :END:
 #+call: make-file-path()
 #+begin_src conf-toml
@@ -121,8 +130,8 @@ line-length = 80
 #+end_src
 ** PATH setup.cfg
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/python_package_template/setup.cfg"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/setup.cfg][setup.cfg]]
+:file-path: "/home/chunglak/projects/orgee/setup.cfg"
+:file-path-link: [[file:/home/chunglak/projects/orgee/setup.cfg][setup.cfg]]
 :END:
 #+call: make-file-path()
 #+begin_src conf-toml
@@ -176,8 +185,8 @@ exclude =
 #+end_src
 ** PATH README.md
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/python_package_template/README.md"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/README.md][README.md]]
+:file-path: "/home/chunglak/projects/orgee/README.md"
+:file-path-link: [[file:/home/chunglak/projects/orgee/README.md][README.md]]
 :END:
 #+call: make-file-path()
 #+begin_src markdown
@@ -188,8 +197,8 @@ exclude =
 #+end_src
 ** PATH .python-version
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/python_package_template/.python-version"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/.python-version][.python-version]]
+:file-path: "/home/chunglak/projects/orgee/.python-version"
+:file-path-link: [[file:/home/chunglak/projects/orgee/.python-version][.python-version]]
 :END:
 #+call: make-file-path()
 Name of pyenv venv
@@ -200,16 +209,16 @@ Name of pyenv venv
 ** PATH bin
 :PROPERTIES:
 :header-args:bash: :shebang #!/bin/bash
-:file-path: "/home/chunglak/projects/python_package_template/bin"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/bin][bin]]
+:file-path: "/home/chunglak/projects/orgee/bin"
+:file-path-link: [[file:/home/chunglak/projects/orgee/bin][bin]]
 :END:
 #+call: make-file-path()
 #+call: make-dir()
 Commands specific to the project
 *** PATH mypy.ini
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/python_package_template/bin/mypy.ini"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/bin/mypy.ini][mypy.ini]]
+:file-path: "/home/chunglak/projects/orgee/bin/mypy.ini"
+:file-path-link: [[file:/home/chunglak/projects/orgee/bin/mypy.ini][mypy.ini]]
 :END:
 #+call: make-file-path()
 #+begin_src conf
@@ -218,19 +227,21 @@ Commands specific to the project
 #+end_src
 *** PATH setup-python-pyenv
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/orgee-roam-extdata/bin/setup-python-pyenv"
-:file-path-link: [[file:/home/chunglak/projects/orgee-roam-extdata/bin/setup-python-pyenv][setup-python-pyenv]]
+:file-path: "/home/chunglak/projects/orgee/bin/setup-python-pyenv"
+:file-path-link: [[file:/home/chunglak/projects/orgee/bin/setup-python-pyenv][setup-python-pyenv]]
 :END:
 #+call: make-file-path()
 Create a pyenv venv for the project
 #+begin_src bash :shebang #!/bin/bash
-set -eu
+set -e
 
 # Reset venv
 venv="<<project-name>>"
 python_version="<<python-version>>"
 if [[ $(pyenv versions | grep "$venv") ]]; then
+  set +e
 	pyenv virtualenv-delete -f $venv
+  set -e
 fi
 pyenv virtualenv $python_version $venv
 eval "$(pyenv init -)"
@@ -264,16 +275,16 @@ ipython kernel install --user --name=$venv
 #+end_src
 ** PATH src
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/python_package_template/src"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/src][src]]
+:file-path: "/home/chunglak/projects/orgee/src"
+:file-path-link: [[file:/home/chunglak/projects/orgee/src][src]]
 :END:
 #+call: make-file-path()
 #+call: make-dir()
 Put code here
 ** PATH tests
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/python_package_template/tests"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/tests][tests]]
+:file-path: "/home/chunglak/projects/orgee/tests"
+:file-path-link: [[file:/home/chunglak/projects/orgee/tests][tests]]
 :END:
 #+call: make-file-path()
 #+call: make-dir()
@@ -281,15 +292,15 @@ Put test suite here
 ** ----------
 ** PATH org
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/python_package_template/org"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/org][org]]
+:file-path: "/home/chunglak/projects/orgee/org"
+:file-path-link: [[file:/home/chunglak/projects/orgee/org][org]]
 :END:
 #+call: make-file-path()
 No need to create this dir: it should pre-exist
 *** PATH template.org
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/python_package_template/org/template.org"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/org/template.org][template.org]]
+:file-path: "/home/chunglak/projects/orgee/org/template.org"
+:file-path-link: [[file:/home/chunglak/projects/orgee/org/template.org][template.org]]
 :END:
 #+call: make-file-path()
 Make copies of this file
@@ -342,14 +353,14 @@ runf(func)  # pylint: disable=undefined-variable
 ** PATH bin
 :PROPERTIES:
 :header-args:bash: :shebang #!/bin/bash
-:file-path: "/home/chunglak/projects/python_package_template/bin"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/bin][bin]]
+:file-path: "/home/chunglak/projects/orgee/bin"
+:file-path-link: [[file:/home/chunglak/projects/orgee/bin][bin]]
 :END:
 #+call: make-file-path()
 *** PATH upload-to-pypi
 :PROPERTIES:
-:file-path: "/home/chunglak/projects/python_package_template/bin/upload-to-pypi"
-:file-path-link: [[file:/home/chunglak/projects/python_package_template/bin/upload-to-pypi][upload-to-pypi]]
+:file-path: "/home/chunglak/projects/orgee/bin/upload-to-pypi"
+:file-path-link: [[file:/home/chunglak/projects/orgee/bin/upload-to-pypi][upload-to-pypi]]
 :END:
 #+call: make-file-path()
 #+begin_src bash :shebang #!/bin/bash
