@@ -15,11 +15,10 @@ def parse_link(s: str) -> tuple[str, str] | None:
     if m := re.match(r"\[\[(.+)\]\[(.+)\]\]", s.strip()):
         uri, title = m.groups()
         return (title, uri)
-    elif m := re.match(r"\[\[(.+)\]\]", s.strip()):
+    if m := re.match(r"\[\[(.+)\]\]", s.strip()):
         uri = m.groups()[0]
         return ("", uri)
-    else:
-        return None
+    return None
 
 
 def make_link(title: str, uri: str) -> str:

@@ -113,16 +113,15 @@ def parse_property(key: str, val: str) -> list[bool | float | int | str]:
     def process(s):
         if s == "t":
             return True
-        elif s == "nil":
+        if s == "nil":
             return False
-        else:
+        try:
+            return int(s)
+        except ValueError:
             try:
-                return int(s)
+                return float(s)
             except ValueError:
-                try:
-                    return float(s)
-                except ValueError:
-                    return s
+                return s
 
     # Do not parse header-args
     if key.lower().startswith("header-args"):
@@ -141,18 +140,17 @@ def dump_property(key: str, vals: list[bool | float | int | str]) -> str:
     def quote(s) -> str:
         if s is True:
             return "t"
-        elif s is False:
+        if s is False:
             return "nil"
-        elif s is None:
+        if s is None:
             # return ""
             return "nil"
-        elif isinstance(s, str):
+        if isinstance(s, str):
             # Escape double quotes
             s = s.replace('"', '\\"')
             # Surround string with spaces with double quotes
             return f'"{s}"' if " " in s else s
-        else:
-            return str(s)
+        return str(s)
 
     # Do not quote header-args
     if key.lower().startswith("header-args"):

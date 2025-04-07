@@ -3,7 +3,8 @@ from __future__ import annotations  # PEP 585
 import hashlib
 from enum import Enum
 from dataclasses import dataclass, field
-from typing import Any, Iterator  # pylint:disable=unused-import
+
+# from typing import Any, Iterator  # pylint:disable=unused-import
 
 from .properties import OrgProperties
 from .markup import remove_org_markup
@@ -42,10 +43,9 @@ class RootMeta:
         todos, dones = self.todos
         if kw in todos:
             return TodoType.TODO
-        elif kw in dones:
+        if kw in dones:
             return TodoType.DONE
-        else:
-            return TodoType.INVALID
+        return TodoType.INVALID
 
 
 class OrgNode:
@@ -93,12 +93,12 @@ class OrgNode:
 
     def all_tags(self) -> set[str]:
         """
-        Return both the node's own tags and all the tags inherited from parent(s)
+        Return both the node's own tags and all the tags
+        inherited from parent(s)
         """
         if self.parent:
             return self.tags | self.parent.all_tags()
-        else:
-            return self.tags
+        return self.tags
 
     def node_hash(self) -> str:
         return hashlib.sha256(self.dumps().encode("utf8")).hexdigest()
@@ -115,8 +115,7 @@ class OrgNode:
     def olp(self) -> list[str]:
         if self.parent:
             return self.parent.olp() + [self.title]
-        else:
-            return [self.title]
+        return [self.title]
 
     def olp_str(self) -> str:
         return " → ".join(self.olp())
@@ -178,29 +177,30 @@ class OrgNode:
     def actual_level(self) -> int:
         if self.level is not None:
             return self.level
-        elif self.parent:
+        if self.parent:
             return self.parent.actual_level() + 1
-        else:
-            return 0
+        return 0
 
     def get_root(self) -> OrgNode:
         if self.parent:
             return self.parent.get_root()
-        else:
-            return self
+        return self
 
     def get_root_meta(self) -> RootMeta | None:
         if self.root_meta:
             return self.root_meta
-        elif self.parent:
+        if self.parent:
             return self.parent.get_root_meta()
-        else:
-            return None
+        return None
 
     def is_root(self):
         return self.root_meta is not None
 
     def align_children(self):
+        """
+        Recursively set the children's level property to None
+        so that level is automatically computed
+        """
         for c in self.children:
             # c.level = (self.level + 1) if self.level else None
             c.level = None
@@ -271,13 +271,11 @@ class OrgNode:
         """
         if not olp:
             return self
-        else:
-            n = self.find_child_by_title(title=olp[0], tags=tags)
-            if n:
-                return n.find_olp(olp[1:])
-            else:
-                print(f"Failed at {olp[0]}")
-                return None
+        n = self.find_child_by_title(title=olp[0], tags=tags)
+        if n:
+            return n.find_olp(olp[1:])
+        print(f"Failed at {olp[0]}")
+        return None
 
     def clean_title(self) -> str:
         return remove_org_markup(self.title)

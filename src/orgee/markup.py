@@ -23,7 +23,6 @@ def sanitize_text_for_org(txt: str) -> str:
     def clean(l):
         if l.startswith("*"):
             return " ".join(l.split(" ")[1:])
-        else:
-            return l
+        return l
 
     return "\n".join(map(clean, txt.split("\n")))

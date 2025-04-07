@@ -10,11 +10,10 @@ def parse_link(s: str) -> tuple[str, str] | None:
     if m := re.match(r"\[\[(.+)\]\[(.+)\]\]", s.strip()):
         url, title = m.groups()
         return (title, url)
-    elif m := re.match(r"\[\[(.+)\]\]", s.strip()):
+    if m := re.match(r"\[\[(.+)\]\]", s.strip()):
         url = m.groups()[0]
         return (url, url)
-    else:
-        return None
+    return None
 
 
 def make_link(title: str, url: str) -> str:
@@ -52,8 +51,7 @@ def prop_by_key(
                 vs.append(v)
     if parse:
         return list(itertools.chain.from_iterable(map(parse_property, vs)))
-    else:
-        return vs
+    return vs
 
 
 def first_prop_by_key(
@@ -85,10 +83,9 @@ def parse_property(s: str) -> tuple:
     def process(s):
         if s == "t":
             return True
-        elif s == "nil":
+        if s == "nil":
             return False
-        else:
-            return s
+        return s
 
     # s = s.replace('\\"', '"')
     # Escape single quotes
@@ -104,20 +101,18 @@ def dump_property(v) -> str:
     def quote(s) -> str:
         if s is True:
             return "t"
-        elif s is False:
+        if s is False:
             return "nil"
-        elif not s:
+        if not s:
             return ""
-        elif isinstance(s, str):
+        if isinstance(s, str):
             s = s.replace('"', '\\"')
             return f'"{s}"' if " " in s else s
-        else:
-            return s
+        return s
 
     if isinstance(v, (list, tuple)):
         return " ".join(map(quote, v))
-    else:
-        return quote(v)
+    return quote(v)
 
 
 def clean_text(s: str) -> str:
@@ -139,7 +134,6 @@ def sanitize_for_org(txt: str) -> str:
     def clean(l):
         if l.startswith("*"):
             return " ".join(l.split(" ")[1:])
-        else:
-            return l
+        return l
 
     return "\n".join(map(clean, txt.split("\n")))
